@@ -8,18 +8,20 @@ import java.util.List;
 
 public interface KitapRepository extends JpaRepository<Kitap, Long> {
 
-    // Dram ve Hikaye türündeki kitaplar (turno ile filtreleme)
-    String QUESTION_1 = """
-        SELECT *
+    // Dram ve Hikaye türündeki kitaplar
+    @Query(value = """
+        SELECT k.kitapno AS kitapno,
+               k.ad AS ad,
+               k.puan AS puan,
+               k.yazarno AS yazarno,
+               k.turno AS turno
         FROM kitap k
-        JOIN tur t ON k.turno = t.turno
-        WHERE t.ad IN ('Dram','Hikaye')
-    """;
-    @Query(value = QUESTION_1, nativeQuery = true)
+        INNER JOIN tur t ON k.turno = t.turno
+        WHERE t.ad IN ('Dram', 'Hikaye')
+    """, nativeQuery = true)
     List<Kitap> findBooks();
 
     // Tüm kitapların ortalama puanı
-    String QUESTION_10 = "SELECT AVG(puan) FROM kitap";
-    @Query(value = QUESTION_10, nativeQuery = true)
+    @Query(value = "SELECT AVG(puan) FROM kitap", nativeQuery = true)
     Double findAvgPointOfBooks();
 }
